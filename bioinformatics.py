@@ -7,9 +7,9 @@ from sklearn.metrics import accuracy_score
 from collections import Counter, defaultdict
 
 #contains the nucleotide sequences of the yeast genome - FASTA file
-genome_fasta = "/Users/safiam/Desktop/bioinformatics /Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa"
+genome_fasta = "Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa"
 #contains annotations of genes, exons, introns, etc of the yeast genome - GTF file
-gtf_file = "/Users/safiam/Desktop/bioinformatics /Saccharomyces_cerevisiae.R64-1-1.113.gtf"
+gtf_file = "Saccharomyces_cerevisiae.R64-1-1.113.gtf"
 
 #method to parse the FASTA file
 #Source: https://lanadominkovic.medium.com/bioinformatics-101-reading-fasta-files-using-biopython-501c390c6820
