@@ -2,7 +2,7 @@ from Bio import SeqIO
 import pandas as pd
 import re
 import numpy as np
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
 from collections import Counter
 
 #contains the nucleotide sequences of the yeast genome - FASTA file
@@ -300,3 +300,13 @@ pred_labels = pred_labels[:min_len]
 
 acc = accuracy_score(true_labels, pred_labels)
 print("Accuracy:", acc)
+
+#report = classification_report(true_labels, pred_labels, labels=['E', 'I', 'U'])
+report = classification_report(true_labels, pred_labels, labels=['E', 'I', 'U'], zero_division=1)
+
+print(report)
+
+from collections import Counter
+
+label_counts = Counter(label for seq in labeled_sequences.values() for label in seq)
+print("Training label distribution:", label_counts)
