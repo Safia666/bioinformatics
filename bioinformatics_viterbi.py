@@ -208,46 +208,76 @@ obs_to_idx = {'A': 0, 'C': 1, 'G': 2, 'T': 3}
 # Prepare testing data
 encoded_sequence = np.array([[obs_to_idx[nuc]] for seq in testing_data.values() for nuc in seq], dtype=int)
 
-# Manually implement Viterbi algorithm
 def viterbi(obs, start_prob, trans_prob, emit_prob):
-    # obs: array of shape (N, 1) with encoded observations
-    # start_prob: initial_probs (length S)
-    # trans_prob: transition_mat (SxS)
-    # emit_prob: emission_mat (SxM)
-    
+    """
+    The Viterbi algorithm computes the most likely sequence of hidden states
+    for a given sequence of observations, given the model parameters.
+
+    Parameters:
+    -----------
+    obs : np.ndarray
+        An array of shape (N, 1) containing the observed symbols (in encoded form).
+        N is the length of the observation sequence.
+    start_prob : np.ndarray
+        A 1D array of length S with the initial probabilities of each state.
+        S is the number of hidden states.
+    trans_prob : np.ndarray
+        A 2D array of shape (S, S) containing transition probabilities between states.
+        trans_prob[i, j] = P(state_j | state_i)
+    emit_prob : np.ndarray
+        A 2D array of shape (S, M) containing emission probabilities.
+        emit_prob[i, k] = P(observation_k | state_i)
+        M is the number of possible observation symbols.
+
+    Returns:
+    --------
+    path : np.ndarray
+        A 1D array of length N giving the most likely state sequence (as state indices).
+    """
+
+    # Number of observations
     N = len(obs)
+    # Number of states
     S = len(start_prob)
 
-    # delta[i, t]: max probability of the most probable path that ends in state i at time t
-    # psi[i, t]: argmax of state at time t-1 that leads to i at time t
+    # delta[i, t]: Probability of the most likely state sequence ending in state i at time t
+    # psi[i, t]: The state at time t-1 that leads to the highest delta[i, t]
     delta = np.zeros((S, N))
     psi = np.zeros((S, N), dtype=int)
 
-    # Initialization
+    # Initialization step: calculate delta for the first observation
     for i in range(S):
+        # The probability of starting in state i, emitting the first observation obs[0]
         delta[i, 0] = start_prob[i] * emit_prob[i, obs[0][0]]
+        # For the first time step, psi is just 0 as there's no previous state
         psi[i, 0] = 0
 
-    # Recursion
+    # Recursion step: compute delta and psi for t = 1 to N-1
     for t in range(1, N):
         for j in range(S):
-            # Compute delta for state j
-            max_val = -1
+            # For each state j at time t, we look back at all states i at time t-1
+            # and choose the one that gives the maximum delta[i, t-1] * trans_prob[i, j]
+            max_val = -1.0
             max_state = 0
             for i in range(S):
+                # Candidate probability of path: delta at previous time step * transition * emission
                 val = delta[i, t-1] * trans_prob[i, j] * emit_prob[j, obs[t][0]]
+                # Update max if we found a higher probability path
                 if val > max_val:
                     max_val = val
                     max_state = i
+            # Store the best found probabilities
             delta[j, t] = max_val
             psi[j, t] = max_state
 
-    # Termination
-    path = np.zeros(N, dtype=int)
+    # Termination step: find the most likely final state
+    # The best final state is the one with the maximum delta at time N-1
     last_state = np.argmax(delta[:, N-1])
-    path[N-1] = last_state
 
-    # Path backtracking
+    # Backtracking step: reconstruct the state path
+    # We know the final state, and we use psi to move backward through time
+    path = np.zeros(N, dtype=int)
+    path[N-1] = last_state
     for t in range(N-2, -1, -1):
         path[t] = psi[path[t+1], t+1]
 
@@ -263,7 +293,7 @@ decoded_string = ''.join(decoded_states)
 true_labels = [label for seq_id in labeled_testing_sequences for label in labeled_testing_sequences[seq_id]]
 pred_labels = decoded_states
 
-# Ensure equal length (in case of any boundary issue)
+# Ensure equal length for accuracy calculation
 min_len = min(len(true_labels), len(pred_labels))
 true_labels = true_labels[:min_len]
 pred_labels = pred_labels[:min_len]
