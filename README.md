@@ -5,19 +5,19 @@ This repository contains our implementation of a Hidden Markov Model (HMM) utili
 ## Files  
 
 ### Code  
-- **`bioinformatics_viterbi.py`**  
+- `bioinformatics_viterbi.py`  
   The final implementation of the HMM model integrated with the Viterbi algorithm.  
-- **`bioinformatics.py`**  
+- `bioinformatics.py` 
   The initial version of the HMM model without the Viterbi algorithm.  
 
 ### Data  
-- **`Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa`**  
+- `Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa`  
   Contains unannotated DNA sequences of the yeast (*Saccharomyces cerevisiae*) genome.  
-- **`Saccharomyces_cerevisiae.R64-1-1.113.gtf`**  
+- `Saccharomyces_cerevisiae.R64-1-1.113.gtf`  
   Includes gene annotations for the yeast genome.  
 
 ### Results  
-- **`final_results.png`**  
+- `final_results.png`  
   Visual representation of the final outcomes from our implementation.  
 
 ## Usage  
